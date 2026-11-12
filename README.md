@@ -23,7 +23,7 @@ If your current site deploys from GitHub instead, replace the repo's files with 
 - **Text**: everything is in `index.html`.
 - **Accent color**: change `--accent` at the top of `styles.css` (try `#CCFF00`, `#FF8A3D` or `#C4B5FD`).
 - **Add a job**: copy one `<article class="job">…</article>` block in `index.html`.
-- **Link preview image** (LinkedIn/WhatsApp): `assets/og-image.png`.
+- **Link preview image** (LinkedIn/WhatsApp): `assets/og-image.jpg`.
 
 ## Files
 
