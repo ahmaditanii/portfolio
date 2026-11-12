@@ -52,16 +52,16 @@
 
       <!-- Fanned ID cards -->
       <div class="stack-wrap">
-        <div class="stack">
-          <div class="card card-back" aria-hidden="true">
+        <div class="stack" id="hero-stack">
+          <div class="card card-back" aria-hidden="true"><div class="card-body">
             <span class="mono small">LOCATION</span>
             <span class="card-big">Beirut, LB</span>
-          </div>
-          <div class="card card-mid" aria-hidden="true">
+          </div></div>
+          <div class="card card-mid" aria-hidden="true"><div class="card-body">
             <span class="mono small">SPEAKS</span>
             <span class="card-big">Arabic<br>English</span>
-          </div>
-          <div class="card card-front">
+          </div></div>
+          <div class="card card-front"><div class="card-body">
             <div class="id-top mono">
               <span>ID · ENGINEER</span>
               <span class="id-chip" aria-hidden="true"></span>
@@ -78,7 +78,7 @@
             <div class="barcode" aria-hidden="true">
               <span style="flex:2"></span><span></span><span style="flex:3"></span><span></span><span></span><span style="flex:4"></span><span></span><span style="flex:2"></span><span style="flex:3"></span><span></span><span style="flex:2"></span><span></span>
             </div>
-          </div>
+          </div></div>
         </div>
       </div>
     </div>
@@ -88,47 +88,76 @@
     <div class="light">
       <!-- ============ CAREER ============ -->
       <section id="career" class="section">
-        <div class="container section-head">
-          <h2 class="display h2 reveal">Career, card by card.</h2>
-          <div class="scroller-controls">
-            <button type="button" class="arrow" data-dir="-1" aria-label="Previous job">
-              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
-            </button>
-            <button type="button" class="arrow" data-dir="1" aria-label="Next job">
-              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
-            </button>
-          </div>
-        </div>
+        <div class="container career">
+          <div class="career-intro">
+            <h2 class="display h2 reveal">Career, card by card.</h2>
+            <p class="career-hint">Drag or swipe the top card away to deal the next one. Arrow keys work too.</p>
 
-        <div class="scroller container" id="job-scroller" tabindex="0" aria-label="Career history, scrollable">
-          <article class="job job-current">
-            <div class="job-meta mono"><span class="accent">● Current</span><span class="muted-dark">May 2023 → now</span></div>
-            <div>
-              <h3 class="display job-title-xl">Huawei</h3>
-              <p class="job-role">Cloud Core Engineer</p>
+            <ol class="deck-index" id="deck-index" aria-label="Jump to a role">
+              <li><button type="button" data-go="0"><span class="mono">04</span> Huawei <span class="muted">2023 – now</span></button></li>
+              <li><button type="button" data-go="1"><span class="mono">03</span> touch <span class="muted">2022 – 23</span></button></li>
+              <li><button type="button" data-go="2"><span class="mono">02</span> IPT Powertech <span class="muted">2022</span></button></li>
+              <li><button type="button" data-go="3"><span class="mono">01</span> OGERO <span class="muted">2021</span></button></li>
+            </ol>
+
+            <div class="deck-controls">
+              <button type="button" class="arrow" id="deck-prev" aria-label="Previous card">
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+              </button>
+              <span class="deck-count mono" id="deck-count" aria-live="polite">01 / 04</span>
+              <button type="button" class="arrow" id="deck-next" aria-label="Next card">
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </button>
             </div>
-          </article>
-          <article class="job">
-            <span class="job-meta mono muted">Nov 2022 – Feb 2023</span>
-            <div>
-              <h3 class="display job-title">touch</h3>
-              <p class="job-role">Call Center Agent</p>
-            </div>
-          </article>
-          <article class="job">
-            <span class="job-meta mono muted">Jul – Aug 2022</span>
-            <div>
-              <h3 class="display job-title">IPT PowerTech</h3>
-              <p class="job-role">Intern</p>
-            </div>
-          </article>
-          <article class="job job-accent">
-            <span class="job-meta mono">Jun – Aug 2021 · where it started</span>
-            <div>
-              <h3 class="display job-title">Ogero</h3>
-              <p class="job-role">Intern</p>
-            </div>
-          </article>
+          </div>
+
+          <div class="deck" id="deck" tabindex="0" aria-roledescription="card deck" aria-label="Career history. Use left and right arrow keys to change card.">
+            <article class="job job-current" data-i="0">
+              <div class="job-top mono"><span class="accent">● Current</span><span>May 2023 → now</span></div>
+              <div class="job-head">
+                <h3 class="display job-title">Huawei</h3>
+                <p class="job-role">Cloud Core Network Engineer</p>
+              </div>
+              <ul class="job-projects mono">
+                <li><span>2026 → now</span>Alfa IMS project</li>
+                <li><span>2026</span>touch UPCF project</li>
+                <li><span>2025</span>touch EOX 1.2 project</li>
+                <li><span>2024 – 25</span>OGERO EOS project</li>
+                <li><span>2023</span>touch EOS project</li>
+              </ul>
+              <p class="job-foot mono"><span>04 / 04</span><span>Beirut, LB</span></p>
+            </article>
+
+            <article class="job" data-i="1">
+              <div class="job-top mono"><span>03</span><span>Nov 2022 – Feb 2023</span></div>
+              <div class="job-head">
+                <h3 class="display job-title">touch</h3>
+                <p class="job-role">Call Center Agent</p>
+              </div>
+              <p class="job-desc">Handled customer requests and problems over e-chat and direct calls, resolving them as efficiently as possible.</p>
+              <p class="job-foot mono"><span>03 / 04</span><span>Beirut, LB</span></p>
+            </article>
+
+            <article class="job" data-i="2">
+              <div class="job-top mono"><span>02</span><span>Jul – Aug 2022</span></div>
+              <div class="job-head">
+                <h3 class="display job-title">IPT Powertech</h3>
+                <p class="job-role">Intern</p>
+              </div>
+              <p class="job-desc">Hands-on time across the departments that keep Alfa and touch sites powered: efficiency, maintenance and supply.</p>
+              <p class="job-foot mono"><span>02 / 04</span><span>Beirut, LB</span></p>
+            </article>
+
+            <article class="job job-accent" data-i="3">
+              <div class="job-top mono"><span>01 · where it started</span><span>Jun – Aug 2021</span></div>
+              <div class="job-head">
+                <h3 class="display job-title">OGERO</h3>
+                <p class="job-role">Intern</p>
+              </div>
+              <p class="job-desc">Introduced to DSL transmission, how service reaches customers, and the differences between fiber and copper equipment.</p>
+              <p class="job-foot mono"><span>01 / 04</span><span>Beirut, LB</span></p>
+            </article>
+          </div>
         </div>
       </section>
 
@@ -139,11 +168,11 @@
           <div class="skill-list">
             <div class="skill reveal">
               <h3>Cloud core &amp; telecom</h3>
-              <p>Operating and troubleshooting core network elements. CCFMA/OMSTAR, MobaXterm.</p>
+              <p>IMS, NFVI and VNF deployment, upgrades and integration with HSS, PCRF, PGW and MSC. MobaXterm, CCN FMA. Huawei 5G HCIA.</p>
             </div>
             <div class="skill reveal">
               <h3>RF &amp; network design</h3>
-              <p>Antenna simulation, topology and signal analysis. CST/HFSS, Packet Tracer, MATLAB.</p>
+              <p>Microstrip and UWB antenna design, with four published IEEE and conference papers. ANSYS HFSS, CST, ADS, MATLAB.</p>
             </div>
             <div class="skill reveal">
               <h3>Software &amp; web</h3>
