@@ -308,9 +308,45 @@ if (folders) {
   const panel = folders.querySelector('.fd-panel');
   const body = folders.querySelector('.fd-body');
   let current = folders.dataset.k, swapTimer;
+
+  // The open tab is one SVG shape: rounded top, straight sides, and curved feet
+  // that flow into the card. It glides (spring) to the chosen tab and stretches to its width.
+  const ind = folders.querySelector('.fd-ind');
+  const indPath = ind?.querySelector('path');
+  const g = { x: 0, w: 0, vx: 0, vw: 0, tx: 0, tw: 0, h: 54, on: false, init: false };
+  const shape = (w, h) => {
+    const r = window.innerWidth <= 760 ? 12 : 16, R = window.innerWidth <= 760 ? 14 : 16, H = h + 3, W = w + 2 * r;
+    return { r, W, H, d: `M0 ${H} A${r} ${r} 0 0 0 ${r} ${H - r} L${r} ${R} A${R} ${R} 0 0 1 ${r + R} 0 L${r + w - R} 0 A${R} ${R} 0 0 1 ${r + w} ${R} L${r + w} ${H - r} A${r} ${r} 0 0 0 ${W} ${H} Z` };
+  };
+  const drawInd = () => {
+    const s = shape(g.w, g.h);
+    ind.setAttribute('width', s.W); ind.setAttribute('height', s.H);
+    ind.setAttribute('viewBox', `0 0 ${s.W} ${s.H}`);
+    indPath.setAttribute('d', s.d);
+    ind.style.transform = `translate3d(${g.x - s.r}px, 0, 0)`;
+  };
+  const stepInd = () => {
+    g.vx = (g.vx + (g.tx - g.x) * 0.075) * 0.72; g.x += g.vx;
+    g.vw = (g.vw + (g.tw - g.w) * 0.075) * 0.72; g.w += g.vw;
+    drawInd();
+    if (Math.abs(g.tx - g.x) < 0.2 && Math.abs(g.tw - g.w) < 0.2 && Math.abs(g.vx) < 0.05) { g.x = g.tx; g.w = g.tw; drawInd(); g.on = false; }
+    else requestAnimationFrame(stepInd);
+  };
+  const placeInd = (tab, jump) => {
+    if (!ind) return;
+    g.tx = tab.offsetLeft; g.tw = tab.offsetWidth; g.h = tab.offsetHeight;
+    if (!g.init || jump || reduceMotion) { g.x = g.tx; g.w = g.tw; g.vx = g.vw = 0; g.init = true; drawInd(); }
+    else if (!g.on) { g.on = true; requestAnimationFrame(stepInd); }
+  };
+  const openTab = () => tabs.find((t) => t.getAttribute('aria-selected') === 'true') || tabs[0];
+  placeInd(openTab(), true);
+  window.addEventListener('resize', () => placeInd(openTab(), true));
+  document.fonts?.ready.then(() => placeInd(openTab(), true));
+
   const select = (tab, focus) => {
     const k = tab.dataset.k;
     tabs.forEach((t) => { const on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
+    placeInd(tab);
     if (focus) tab.focus();
     if (k === current) return;
     current = k;
@@ -323,14 +359,14 @@ if (folders) {
     body.classList.add('is-out');               // old content fades out quickly
     swapTimer = setTimeout(() => {
       const from = panel.offsetHeight;
-      panel.getAnimations().forEach((a) => a.cancel());
+      if (panel._hAnim) panel._hAnim.cancel();   // stop only the size animation, never the colour fade
       fill();
       body.classList.remove('is-out');
       const to = panel.offsetHeight;
       void body.offsetWidth;                    // restart the entrance animation
       body.classList.add('is-in');              // new content rises in, one piece after another
       if (Math.abs(to - from) > 1) {            // the card eases to its new height instead of jumping
-        panel.animate([{ height: from + 'px' }, { height: to + 'px' }], { duration: 480, easing: 'cubic-bezier(.33,1,.68,1)' });
+        panel._hAnim = panel.animate([{ height: from + 'px' }, { height: to + 'px' }], { duration: 480, easing: 'cubic-bezier(.33,1,.68,1)' });
       }
     }, 180);
   };
@@ -401,19 +437,32 @@ if (crTrack) {
     const i = current();
     if (count) count.textContent = `${pad(i + 1)} / ${pad(cards.length)}`;
     const type = cards[i].dataset.type;
+    if (lockDrop) return;                       // a chip jump is in progress: keep the drop and highlight on the target
     chips.forEach((b) => b.classList.toggle('is-on', b.dataset.go === type));
-    if (!lockDrop) moveDrop(chips.find((b) => b.dataset.go === type));
+    moveDrop(chips.find((b) => b.dataset.go === type));
   };
-  document.getElementById('cr-prev')?.addEventListener('click', () => go(current() - 1));
-  document.getElementById('cr-next')?.addEventListener('click', () => go(current() + 1));
+  // arrows step from where the row really is (works even when several cards fit on screen)
+  const offs = () => cards.map((c) => c.offsetLeft - crTrack.offsetLeft);
+  const stepBy = (d) => {
+    const x = crTrack.scrollLeft, o = offs();
+    let i = d > 0 ? o.findIndex((v) => v > x + 4) : o.map((v, k) => (v < x - 4 ? k : -1)).filter((k) => k >= 0).pop();
+    if (i === undefined || i < 0) return;
+    go(i);
+  };
+  document.getElementById('cr-prev')?.addEventListener('click', () => stepBy(-1));
+  document.getElementById('cr-next')?.addEventListener('click', () => stepBy(1));
   chips.forEach((b) => b.addEventListener('click', () => {
-    lockDrop = true; moveDrop(b);
-    clearTimeout(lockT); lockT = setTimeout(() => { lockDrop = false; update(); }, 1000);
+    lockDrop = true;
+    chips.forEach((c) => c.classList.toggle('is-on', c === b));
+    moveDrop(b);
+    const release = () => { clearTimeout(lockT); crTrack.removeEventListener('scrollend', release); lockDrop = false; update(); };
+    clearTimeout(lockT); lockT = setTimeout(release, 1600);
+    crTrack.addEventListener('scrollend', release, { once: true });
     go(cards.findIndex((c) => c.dataset.type === b.dataset.go));
   }));
   crTrack.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight') { e.preventDefault(); go(current() + 1); }
-    if (e.key === 'ArrowLeft')  { e.preventDefault(); go(current() - 1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); stepBy(1); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); stepBy(-1); }
   });
   let raf;
   crTrack.addEventListener('scroll', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(update); }, { passive: true });

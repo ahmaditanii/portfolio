@@ -309,7 +309,7 @@ html:not(.js) .job { position: relative; height: auto; min-height: 380px; cursor
 .folders[data-k="rf"]     { --fd-bg: #FFFFFF; --fd-fg: #0B1412; --fd-soft: #34433F; --fd-line: #DCE3E0;           --fd-mark: #0F766E; --fd-chip: #F1F5F3; }
 .folders[data-k="web"]    { --fd-bg: #2DD4BF; --fd-fg: #0B1412; --fd-soft: #0D3A33; --fd-line: rgba(11,20,18,.18); --fd-mark: #0B1412; --fd-chip: rgba(255,255,255,.3); }
 
-.fd-tabs { display: flex; gap: 6px; padding: 0 46px; }   /* starts where the card's straight top edge starts */
+.fd-tabs { position: relative; display: flex; gap: 6px; padding: 0 46px; }   /* starts where the card's straight top edge starts */
 .fd-tab {
   position: relative; z-index: 0; flex: 0 0 auto; display: inline-flex; align-items: center; gap: 10px; min-height: 54px; padding: 0 22px;
   border: 0; border-radius: 16px 16px 0 0; cursor: pointer; white-space: nowrap;
@@ -321,15 +321,11 @@ html:not(.js) .job { position: relative; height: auto; min-height: 380px; cursor
 .fd-rf     { background: #FBFCFB; box-shadow: inset 0 0 0 1px #DCE3E0; }
 .fd-web    { background: #BDEEE6; }
 @media (hover: hover) { .fd-tab:hover { transform: translateY(5px); color: #0B1412; } }
-/* the open tab rises and fuses with the card below */
-.fd-tab[aria-selected="true"] { z-index: 2; background: var(--fd-bg); color: var(--fd-fg); transform: translateY(2px); box-shadow: none; }
-/* curved shoulders so the open tab flows into the card */
-.fd-tab[aria-selected="true"]::before, .fd-tab[aria-selected="true"]::after {
-  content: ""; position: absolute; bottom: 0; width: 16px; height: 18px; pointer-events: none; background: transparent;
-  transition: box-shadow .45s cubic-bezier(.4,0,.2,1);
-}
-.fd-tab[aria-selected="true"]::before { left: -15.5px; border-bottom-right-radius: 16px; box-shadow: 6px 6px 0 6px var(--fd-bg); clip-path: inset(0 -1px 0 0); }
-.fd-tab[aria-selected="true"]::after { right: -15.5px; border-bottom-left-radius: 16px; box-shadow: -6px 6px 0 6px var(--fd-bg); clip-path: inset(0 0 0 -1px); }
+/* the open tab: one drawn shape (tab + both curved sides) that slides to the chosen tab */
+.fd-tab[aria-selected="true"] { z-index: 3; background: transparent !important; box-shadow: none !important; color: var(--fd-fg); transform: none;
+  transition: transform .45s cubic-bezier(.4,0,.2,1), color .45s cubic-bezier(.4,0,.2,1); }
+.fd-ind { position: absolute; z-index: 2; left: 0; top: 0; overflow: visible; pointer-events: none; will-change: transform; }
+.fd-ind path { fill: var(--fd-bg); transition: fill .45s cubic-bezier(.4,0,.2,1); }
 .fd-tab, .cr-filters button, .arrow { -webkit-tap-highlight-color: transparent; }
 .fd-tab:focus-visible { text-decoration: underline 2px; text-underline-offset: 6px; }
 .fd-n { font-size: 11px; opacity: .6; }
@@ -438,9 +434,6 @@ html:not(.js) .job { position: relative; height: auto; min-height: 380px; cursor
   .cr { min-height: 280px; padding: 22px; }
   .cr-t { font-size: 21px; }
   .fd-tab { flex: 1 1 0; justify-content: center; padding: 0 4px; min-height: 48px; font-size: 14px; }
-  .fd-tab[aria-selected="true"]::before, .fd-tab[aria-selected="true"]::after { width: 12px; height: 14px; }
-  .fd-tab[aria-selected="true"]::before { left: -11.5px; border-bottom-right-radius: 12px; }
-  .fd-tab[aria-selected="true"]::after { right: -11.5px; border-bottom-left-radius: 12px; }
   .fd-n, .fd-long { display: none; }
   .fd-short { display: inline; }
   .fd-panel { border-radius: 20px; }
