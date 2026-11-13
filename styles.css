@@ -299,7 +299,14 @@ html:not(.js) .job { position: relative; height: auto; min-height: 380px; cursor
 
 /* ---------- Expertise: "What I bring" cards ---------- */
 .bring-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 48px; }
-.bring-sub { max-width: 420px; font-size: 17px; line-height: 1.55; color: var(--text-soft); }
+.bring-sub { max-width: 560px; font-size: clamp(24px, 2.6vw, 34px); font-weight: 700; line-height: 1.18; letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; }
+/* highlighter strokes that sweep in when the line appears */
+.hl { color: inherit; background-color: transparent; padding: 0 .08em; border-radius: .12em; background-repeat: no-repeat; background-position: 0 88%; background-size: 0% .42em;
+  transition: background-size .9s cubic-bezier(.65,0,.35,1); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.hl-eng  { background-image: linear-gradient(#2DD4BF, #2DD4BF); }
+.hl-grow { background-image: linear-gradient(#E6BC5C, #E6BC5C); transition-delay: .45s; }
+.bring-sub.in .hl, .bring-sub:not(.reveal) .hl { background-size: 100% .42em; }
+@media (prefers-reduced-motion: reduce) { .hl { transition: none; background-size: 100% .42em; } }
 /* Folder tabs: one big card, four index tabs; each folder has its own color */
 .folders {
   margin-top: 40px; position: relative; isolation: isolate;

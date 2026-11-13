@@ -325,18 +325,25 @@ if (folders) {
     indPath.setAttribute('d', s.d);
     ind.style.transform = `translate3d(${g.x - s.r}px, 0, 0)`;
   };
-  const stepInd = () => {
-    g.vx = (g.vx + (g.tx - g.x) * 0.075) * 0.72; g.x += g.vx;
-    g.vw = (g.vw + (g.tw - g.w) * 0.075) * 0.72; g.w += g.vw;
-    drawInd();
-    if (Math.abs(g.tx - g.x) < 0.2 && Math.abs(g.tw - g.w) < 0.2 && Math.abs(g.vx) < 0.05) { g.x = g.tx; g.w = g.tw; drawInd(); g.on = false; }
-    else requestAnimationFrame(stepInd);
-  };
+  // glide (no bounce): eases from where it is to the chosen tab and stops exactly there,
+  // so it never swings past the card's edge
+  let anim = null;
+  const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const placeInd = (tab, jump) => {
     if (!ind) return;
     g.tx = tab.offsetLeft; g.tw = tab.offsetWidth; g.h = tab.offsetHeight;
-    if (!g.init || jump || reduceMotion) { g.x = g.tx; g.w = g.tw; g.vx = g.vw = 0; g.init = true; drawInd(); }
-    else if (!g.on) { g.on = true; requestAnimationFrame(stepInd); }
+    if (!g.init || jump || reduceMotion) { if (anim) cancelAnimationFrame(anim.raf); anim = null; g.x = g.tx; g.w = g.tw; g.init = true; drawInd(); return; }
+    if (anim) cancelAnimationFrame(anim.raf);
+    const from = { x: g.x, w: g.w }, dist = Math.abs(g.tx - g.x);
+    const dur = Math.min(620, 360 + dist * 0.5), t0 = performance.now();
+    anim = {};
+    const frame = (now) => {
+      const p = Math.min(1, (now - t0) / dur), e = ease(p);
+      g.x = from.x + (g.tx - from.x) * e; g.w = from.w + (g.tw - from.w) * e;
+      drawInd();
+      if (p < 1) anim.raf = requestAnimationFrame(frame); else anim = null;
+    };
+    anim.raf = requestAnimationFrame(frame);
   };
   const openTab = () => tabs.find((t) => t.getAttribute('aria-selected') === 'true') || tabs[0];
   placeInd(openTab(), true);
