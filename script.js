@@ -297,3 +297,126 @@ if (gantt) {
   });
   if (tabs.length) show(tabs[0]);
 }
+
+/* ---------------------------------------------------------
+   "What I bring" folders: tabs bring a folder forward;
+   the card's color slides and the content swaps in
+   --------------------------------------------------------- */
+const folders = document.querySelector('.folders');
+if (folders) {
+  const tabs = [...folders.querySelectorAll('.fd-tab')];
+  const panel = folders.querySelector('.fd-panel');
+  const body = folders.querySelector('.fd-body');
+  let current = folders.dataset.k, swapTimer;
+  const select = (tab, focus) => {
+    const k = tab.dataset.k;
+    tabs.forEach((t) => { const on = t === tab; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
+    if (focus) tab.focus();
+    if (k === current) return;
+    current = k;
+    folders.dataset.k = k;                      // color theme slides via CSS
+    panel.setAttribute('aria-labelledby', tab.id);
+    const fill = () => { body.replaceChildren(document.getElementById('fd-' + k).content.cloneNode(true)); };
+    clearTimeout(swapTimer);
+    if (reduceMotion) { fill(); return; }
+    body.classList.remove('is-in');
+    body.classList.add('is-out');               // old content fades out quickly
+    swapTimer = setTimeout(() => {
+      const from = panel.offsetHeight;
+      panel.getAnimations().forEach((a) => a.cancel());
+      fill();
+      body.classList.remove('is-out');
+      const to = panel.offsetHeight;
+      void body.offsetWidth;                    // restart the entrance animation
+      body.classList.add('is-in');              // new content rises in, one piece after another
+      if (Math.abs(to - from) > 1) {            // the card eases to its new height instead of jumping
+        panel.animate([{ height: from + 'px' }, { height: to + 'px' }], { duration: 480, easing: 'cubic-bezier(.33,1,.68,1)' });
+      }
+    }, 180);
+  };
+  tabs.forEach((t, i) => {
+    t.tabIndex = t.getAttribute('aria-selected') === 'true' ? 0 : -1;
+    t.addEventListener('click', () => select(t));
+    t.addEventListener('keydown', (e) => {
+      const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (!d) return;
+      e.preventDefault();
+      select(tabs[(i + d + tabs.length) % tabs.length], true);
+    });
+  });
+}
+
+/* ---------------------------------------------------------
+   Research & credentials: swipeable cards with arrows,
+   a counter and chips that jump to each type
+   --------------------------------------------------------- */
+const crTrack = document.getElementById('cr-track');
+if (crTrack) {
+  const cards = [...crTrack.querySelectorAll('.cr')];
+  const count = document.getElementById('cr-count');
+  const chips = [...document.querySelectorAll('.cr-filters [data-go]')];
+  const pad = (v) => String(v).padStart(2, '0');
+  const current = () => {
+    const x = crTrack.scrollLeft;
+    let best = 0, dist = Infinity;
+    cards.forEach((c, i) => { const d = Math.abs(c.offsetLeft - crTrack.offsetLeft - x); if (d < dist) { dist = d; best = i; } });
+    // at the far end, the last card counts as current
+    if (crTrack.scrollLeft + crTrack.clientWidth >= crTrack.scrollWidth - 4) best = cards.length - 1;
+    return best;
+  };
+  // the selection pill moves like a drop of water. Each edge is a spring:
+  // the front edge is quick, the tail is softer, so it stretches, then gathers itself.
+  const drop = document.querySelector('.cr-drop');
+  let lastChip = null, lockDrop = false, lockT;
+  const sp = { l: 0, r: 0, vl: 0, vr: 0, tl: 0, tr: 0, top: 0, h: 40, on: false, init: false };
+  const draw = () => {
+    const w = Math.max(0, sp.r - sp.l), tw = sp.tr - sp.tl;
+    const stretch = Math.min(1, Math.max(0, (w - tw) / 120));
+    drop.style.width = w + 'px';
+    drop.style.transform = `translate3d(${sp.l}px, ${sp.top}px, 0) scaleY(${1 - stretch * 0.22})`;
+  };
+  const step = () => {
+    const goingRight = sp.tl >= sp.l;
+    const kL = goingRight ? 0.06 : 0.11, kR = goingRight ? 0.11 : 0.06, damp = 0.7;
+    sp.vl = (sp.vl + (sp.tl - sp.l) * kL) * damp; sp.l += sp.vl;
+    sp.vr = (sp.vr + (sp.tr - sp.r) * kR) * damp; sp.r += sp.vr;
+    draw();
+    const still = Math.abs(sp.tl - sp.l) < 0.3 && Math.abs(sp.tr - sp.r) < 0.3 && Math.abs(sp.vl) < 0.05 && Math.abs(sp.vr) < 0.05;
+    if (still) { sp.l = sp.tl; sp.r = sp.tr; draw(); sp.on = false; } else requestAnimationFrame(step);
+  };
+  const moveDrop = (chip, force) => {
+    if (!drop || !chip || (chip === lastChip && !force)) return;
+    sp.tl = chip.offsetLeft; sp.tr = chip.offsetLeft + chip.offsetWidth;
+    sp.top = chip.offsetTop; drop.style.height = chip.offsetHeight + 'px';
+    if (!sp.init || force || reduceMotion) {
+      sp.l = sp.tl; sp.r = sp.tr; sp.vl = sp.vr = 0; sp.init = true; draw();
+    } else if (!sp.on) { sp.on = true; requestAnimationFrame(step); }
+    lastChip = chip;
+  };
+  const go = (i) => {
+    const c = cards[Math.max(0, Math.min(cards.length - 1, i))];
+    crTrack.scrollTo({ left: c.offsetLeft - crTrack.offsetLeft, behavior: reduceMotion ? 'auto' : 'smooth' });
+  };
+  const update = () => {
+    const i = current();
+    if (count) count.textContent = `${pad(i + 1)} / ${pad(cards.length)}`;
+    const type = cards[i].dataset.type;
+    chips.forEach((b) => b.classList.toggle('is-on', b.dataset.go === type));
+    if (!lockDrop) moveDrop(chips.find((b) => b.dataset.go === type));
+  };
+  document.getElementById('cr-prev')?.addEventListener('click', () => go(current() - 1));
+  document.getElementById('cr-next')?.addEventListener('click', () => go(current() + 1));
+  chips.forEach((b) => b.addEventListener('click', () => {
+    lockDrop = true; moveDrop(b);
+    clearTimeout(lockT); lockT = setTimeout(() => { lockDrop = false; update(); }, 1000);
+    go(cards.findIndex((c) => c.dataset.type === b.dataset.go));
+  }));
+  crTrack.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); go(current() + 1); }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); go(current() - 1); }
+  });
+  let raf;
+  crTrack.addEventListener('scroll', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(update); }, { passive: true });
+  window.addEventListener('resize', () => { update(); moveDrop(lastChip, true); });
+  update();
+}

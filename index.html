@@ -47,8 +47,7 @@
         <p class="lead">Communication engineer on Huawei's cloud core team, keeping networks running. Web developer after hours.</p>
         <div class="btn-row">
           <a href="Ahmad%20Itani%20CV.pdf" class="btn btn-light" download>
-            Download résumé
-            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg>
+            Download résumé <span aria-hidden="true">↓</span>
           </a>
           <a href="https://www.linkedin.com/in/ahmad-itani-1a8910211/" class="btn btn-ghost" target="_blank" rel="noopener">LinkedIn ↗</a>
         </div>
@@ -96,7 +95,7 @@
         <div class="container career">
           <div class="career-intro">
             <h2 class="display h2 reveal">Career, card by card.</h2>
-            <p class="career-hint">Drag or swipe the top card away to deal the next one. Arrow keys work too.</p>
+            <p class="career-hint">Drag or swipe the top card away to deal the next one.</p>
 
             <ol class="deck-index" id="deck-index" aria-label="Jump to a role">
               <li><button type="button" data-go="0"><span class="mono">01</span> Huawei <span class="muted">2023 – now</span></button></li>
@@ -107,12 +106,10 @@
             </ol>
 
             <div class="deck-controls">
-              <button type="button" class="arrow" id="deck-prev" aria-label="Previous card">
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+              <button type="button" class="arrow" id="deck-prev" aria-label="Previous card"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
               </button>
               <span class="deck-count mono" id="deck-count" aria-live="polite">01 / 05</span>
-              <button type="button" class="arrow" id="deck-next" aria-label="Next card">
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              <button type="button" class="arrow" id="deck-next" aria-label="Next card"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
               </button>
             </div>
           </div>
@@ -197,20 +194,133 @@
 
       <!-- ============ EXPERTISE ============ -->
       <section id="expertise" class="section section-tight-top">
-        <div class="container expertise">
-          <h2 class="display h2 reveal">What I bring.</h2>
-          <div class="skill-list">
-            <div class="skill reveal">
-              <h3>Cloud core &amp; telecom</h3>
-              <p>IMS, NFVI and VNF deployment, upgrades and integration with HSS, PCRF, PGW and MSC. MobaXterm, CCN FMA. Huawei 5G HCIA.</p>
+        <div class="container">
+          <div class="bring-head">
+            <h2 class="display h2 reveal">What I bring.</h2>
+            <p class="bring-sub">Two sides of the same habit: build things that work, then make them reach people.</p>
+          </div>
+
+          <div class="folders reveal" data-k="cloud">
+            <div class="fd-tabs" role="tablist" aria-label="What I bring">
+              <button type="button" role="tab" class="fd-tab fd-cloud" id="fd-tab-cloud" aria-controls="fd-panel" aria-selected="true" data-k="cloud"><span class="fd-n mono">01</span><span class="fd-long">Cloud &amp; telecom</span><span class="fd-short">Cloud</span></button>
+              <button type="button" role="tab" class="fd-tab fd-growth" id="fd-tab-growth" aria-controls="fd-panel" aria-selected="false" data-k="growth"><span class="fd-n mono">02</span><span class="fd-long">Creator growth</span><span class="fd-short">Growth</span></button>
+              <button type="button" role="tab" class="fd-tab fd-rf" id="fd-tab-rf" aria-controls="fd-panel" aria-selected="false" data-k="rf"><span class="fd-n mono">03</span><span class="fd-long">Antenna &amp; RF</span><span class="fd-short">RF</span></button>
+              <button type="button" role="tab" class="fd-tab fd-web" id="fd-tab-web" aria-controls="fd-panel" aria-selected="false" data-k="web"><span class="fd-n mono">04</span><span class="fd-long">Web</span><span class="fd-short">Web</span></button>
             </div>
-            <div class="skill reveal">
-              <h3>RF &amp; network design</h3>
-              <p>Microstrip and UWB antenna design, with four published IEEE and conference papers. ANSYS HFSS, CST, ADS, MATLAB.</p>
+            <div class="fd-panel" id="fd-panel" role="tabpanel" aria-labelledby="fd-tab-cloud" tabindex="0">
+              <div class="fd-body">
+              <div class="fd-head">
+                <h3 class="display">Cloud &amp; telecom infrastructure</h3>
+                <p>Keeping operator networks running, from the hardware up.</p>
+              </div>
+              <ol class="fd-points">
+                <li>Cloud and telecom infrastructure deployment</li>
+                <li>System upgrades and integration across core network systems</li>
+                <li>Huawei 5G HCIA certified</li>
+              </ol>
+              <div class="fd-tags mono"><span>MobaXterm</span><span>CCN FMA</span><span>Huawei 5G HCIA</span></div>
+              </div>
             </div>
-            <div class="skill reveal">
-              <h3>Software &amp; web</h3>
-              <p>Web interfaces and small tools that save time. Visual Studio, AutoCAD.</p>
+            <template id="fd-cloud">
+              <div class="fd-head">
+                <h3 class="display">Cloud &amp; telecom infrastructure</h3>
+                <p>Keeping operator networks running, from the hardware up.</p>
+              </div>
+              <ol class="fd-points">
+                <li>Cloud and telecom infrastructure deployment</li>
+                <li>System upgrades and integration across core network systems</li>
+                <li>Huawei 5G HCIA certified</li>
+              </ol>
+              <div class="fd-tags mono"><span>MobaXterm</span><span>CCN FMA</span><span>Huawei 5G HCIA</span></div>
+            </template>
+            <template id="fd-growth">
+              <div class="fd-head">
+                <h3 class="display">Creator partnerships &amp; growth</h3>
+                <p>Turning a creator’s audience into a product that sells.</p>
+              </div>
+              <ol class="fd-points">
+                <li>Offer and product strategy</li>
+                <li>Sales copy and email outreach</li>
+                <li>Funnel and launch setup</li>
+                <li>Systems and operations</li>
+              </ol>
+              <div class="fd-tags mono"><span>Offer</span><span>Copy</span><span>Funnel</span><span>Launch</span></div>
+            </template>
+            <template id="fd-rf">
+              <div class="fd-head">
+                <h3 class="display">Antenna &amp; RF design</h3>
+                <p>Where it started: designing and testing antennas.</p>
+              </div>
+              <ol class="fd-points">
+                <li>Antenna design and simulation</li>
+                <li>Three published research papers</li>
+                <li>Final-year project: band-notched UWB microstrip antenna</li>
+              </ol>
+              <div class="fd-tags mono"><span>ANSYS HFSS</span><span>CST</span><span>ADS</span><span>MATLAB</span></div>
+            </template>
+            <template id="fd-web">
+              <div class="fd-head">
+                <h3 class="display">Web development</h3>
+                <p>Building sites like this one, from idea to deploy.</p>
+              </div>
+              <ol class="fd-points">
+                <li>Designing and building websites, including this one</li>
+                <li>Version control and continuous deployment</li>
+              </ol>
+              <div class="fd-tags mono"><span>Visual Studio</span><span>React</span><span>GitHub</span><span>Netlify</span></div>
+            </template>
+          </div>
+
+          <div class="records reveal">
+            <div class="records-head">
+              <h3 class="display">Research &amp; credentials</h3>
+              <div class="cr-filters mono" role="group" aria-label="Jump to">
+                <button type="button" data-go="cert">Certificate</button>
+                <button type="button" data-go="paper">Papers <span>3</span></button>
+                <button type="button" data-go="degree">Degree</button><span class="cr-drop" aria-hidden="true"></span>
+              </div>
+            </div>
+            <div class="cr-track" id="cr-track" tabindex="0" aria-label="Research and credentials, swipe to browse">
+              <article class="cr cr-cert" data-type="cert" aria-label="Certificate, 2025">
+                <span class="cr-mark display" aria-hidden="true">5G</span>
+                <div class="cr-top mono"><span>Certificate</span><span>2025</span></div>
+                <h4 class="cr-t">Huawei HCIA – 5G</h4>
+                <p class="cr-m">Huawei certification · valid to 2028</p>
+                <a class="cr-link" href="assets/certificates/huawei-hcia-5g.pdf" target="_blank" rel="noopener">View certificate <svg class="ico ico-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+              </article>
+              <article class="cr cr-paper" data-type="paper" aria-label="Paper 1 of 3, 2024">
+                
+                <div class="cr-top mono"><span>Paper 1 of 3</span><span>2024</span></div>
+                <h4 class="cr-t">A Compact Band-Notched Circular Patch Antenna for UWB Application</h4>
+                <p class="cr-m">CANWEST IRC</p>
+                <a class="cr-link" href="https://scholar.google.com/scholar?q=%22A%20Compact%20Band-Notched%20Circular%20Patch%20Antenna%20for%20UWB%20Application%22" target="_blank" rel="noopener">Find on Google Scholar <svg class="ico ico-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+              </article>
+              <article class="cr cr-paper" data-type="paper" aria-label="Paper 2 of 3, 2023">
+                
+                <div class="cr-top mono"><span>Paper 2 of 3</span><span>2023</span></div>
+                <h4 class="cr-t">Hexagonal Patch Antenna for Ultra-Wide Band Applications</h4>
+                <p class="cr-m">IEEE IMCET · pp. 229–232</p>
+                <a class="cr-link" href="https://ieeexplore.ieee.org/search/searchresult.jsp?queryText=%22Hexagonal%20Patch%20Antenna%20for%20Ultra-Wide%20Band%20Applications%22" target="_blank" rel="noopener">Find on IEEE Xplore <svg class="ico ico-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+              </article>
+              <article class="cr cr-paper" data-type="paper" aria-label="Paper 3 of 3, 2023">
+                
+                <div class="cr-top mono"><span>Paper 3 of 3</span><span>2023</span></div>
+                <h4 class="cr-t">Dual Band Circular Patch Antenna for GPS and WiMAX Applications</h4>
+                <p class="cr-m">IEEE MI-STA · pp. 691–695</p>
+                <a class="cr-link" href="https://ieeexplore.ieee.org/search/searchresult.jsp?queryText=%22Dual%20Band%20Circular%20Patch%20Antenna%20for%20GPS%20and%20WiMAX%20Applications%22" target="_blank" rel="noopener">Find on IEEE Xplore <svg class="ico ico-s" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+              </article>
+              <article class="cr cr-degree" data-type="degree" aria-label="Degree, 2023">
+                <span class="cr-mark display" aria-hidden="true">BAU</span>
+                <div class="cr-top mono"><span>Degree</span><span>2023</span></div>
+                <h4 class="cr-t">Bachelor’s in Electronics &amp; Communication</h4>
+                <p class="cr-m">Beirut Arab University · GPA 3.69</p>
+                <span class="cr-link cr-nolink">Final-year project: band-notched UWB antenna</span>
+              </article>
+            </div>
+            <div class="cr-controls">
+              <button type="button" class="arrow" id="cr-prev" aria-label="Previous"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
+              <span class="cr-count mono" id="cr-count" aria-live="polite">01 / 05</span>
+              <button type="button" class="arrow" id="cr-next" aria-label="Next"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
             </div>
           </div>
         </div>
