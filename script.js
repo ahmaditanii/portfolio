@@ -41,25 +41,66 @@ if (stack && !reduceMotion && window.matchMedia('(hover: hover) and (pointer: fi
 
 /* ---------------------------------------------------------
    Hero ID card: role glitches between
-   "Cloud Core Engineer" and "Growth Operator"
+   "Cloud Core Engineer" and "Growth Operator".
+   The text decodes letter by letter while the photo
+   splits and a scanline sweeps the card.
    --------------------------------------------------------- */
+const GLYPHS = '!<>-_\\/[]{}=+*^?#01ABCDEFXYZ';
+const esc = (c) => (c === '<' ? '&lt;' : c === '>' ? '&gt;' : c === '&' ? '&amp;' : c);
+
+// Morph el's text into `to` over ~`dur` ms, each letter settling at its own moment
+const scramble = (el, to, dur = 620) => {
+  if (el._raf) cancelAnimationFrame(el._raf);
+  const from = el.textContent;
+  const len = Math.max(from.length, to.length);
+  const queue = [];
+  for (let i = 0; i < len; i++) {
+    const start = Math.random() * dur * 0.35;
+    const end = start + dur * (0.35 + Math.random() * 0.3);
+    queue.push({ from: from[i] || '', to: to[i] || '', start, end, ch: '' });
+  }
+  const t0 = performance.now();
+  const tick = (now) => {
+    const t = now - t0;
+    let out = '', done = 0;
+    for (const q of queue) {
+      if (t >= q.end) { done++; out += esc(q.to); }
+      else if (t >= q.start) {
+        if (!q.ch || Math.random() < 0.28) q.ch = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+        out += `<span class="g">${esc(q.ch)}</span>`;
+      } else out += esc(q.from);
+    }
+    el.innerHTML = out;
+    if (done < queue.length) el._raf = requestAnimationFrame(tick);
+    else el.textContent = to;
+  };
+  el._raf = requestAnimationFrame(tick);
+};
+
 if (stack) {
-  let glitchTimer;
+  const labels = [...stack.querySelectorAll('.scr')];
+  let alt = false, glitchTimer;
   const setAlt = (on) => {
-    if (stack.classList.contains('is-alt') === on) return;
+    if (alt === on) return;
+    alt = on;
+    stack.classList.toggle('is-alt', on);
+    labels.forEach((el) => {
+      const to = on ? el.dataset.b : el.dataset.a;
+      if (reduceMotion) el.textContent = to; else scramble(el, to);
+    });
+    if (reduceMotion) return;
+    stack.classList.remove('glitching');
+    void stack.offsetWidth;                  // restart the CSS glitch even mid-animation
     stack.classList.add('glitching');
-    // swap the text halfway through the glitch, so the change hides inside the noise
-    setTimeout(() => stack.classList.toggle('is-alt', on), reduceMotion ? 0 : 180);
     clearTimeout(glitchTimer);
-    glitchTimer = setTimeout(() => stack.classList.remove('glitching'), 480);
+    glitchTimer = setTimeout(() => stack.classList.remove('glitching'), 650);
   };
   if (window.matchMedia('(hover: hover)').matches) {
     stack.addEventListener('pointerenter', () => setAlt(true));
     stack.addEventListener('pointerleave', () => setAlt(false));
   } else {
     // Phones: flip every few seconds, or on tap
-    let alt = false;
-    const flip = () => { alt = !alt; setAlt(alt); };
+    const flip = () => setAlt(!alt);
     let cycle = setInterval(flip, 3600);
     stack.addEventListener('click', () => { clearInterval(cycle); flip(); cycle = setInterval(flip, 3600); });
   }

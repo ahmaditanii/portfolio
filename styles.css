@@ -300,32 +300,71 @@ html:not(.js) .job { position: relative; height: auto; min-height: 380px; cursor
 .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold-ink); flex: 0 0 auto; animation: pulse 1.8s ease-out infinite; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(42,30,6,.45); } 100% { box-shadow: 0 0 0 9px rgba(42,30,6,0); } }
 
-/* ---------- Hero ID card: role glitch ---------- */
+/* ---------- Hero ID card: role glitch ----------
+   1. text decodes letter by letter (script.js)
+   2. photo splits into red / cyan slices
+   3. a scanline sweeps across the card            */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-.swap { display: inline-grid; }
-.swap > span { grid-area: 1 / 1; transition: opacity .12s steps(1); }
-.swap .sw-b { opacity: 0; color: #9A6F1E; }
-.stack.is-alt .swap .sw-a { opacity: 0; }
-.stack.is-alt .swap .sw-b { opacity: 1; }
-.stack.is-alt .id-chip { background: var(--gold); }
-.id-chip { transition: background-color .3s; }
-.stack.glitching .swap { animation: glitch .48s steps(2, end) both; }
-.stack.glitching .photo img { animation: glitch-img .48s steps(2, end) both; }
-@keyframes glitch {
-  0%   { transform: translate(0); text-shadow: 2px 0 #FF2E63, -2px 0 var(--accent); clip-path: inset(0 0 0 0); }
-  15%  { transform: translate(-3px, 1px); clip-path: inset(10% 0 55% 0); }
-  30%  { transform: translate(3px, -1px); text-shadow: -3px 0 #FF2E63, 3px 0 var(--accent); clip-path: inset(60% 0 5% 0); }
-  45%  { transform: translate(-2px, 0); clip-path: inset(30% 0 30% 0); }
-  60%  { transform: translate(2px, 1px); text-shadow: 2px 0 var(--gold), -2px 0 var(--accent); clip-path: inset(0 0 70% 0); }
-  80%  { transform: translate(-1px, 0); clip-path: inset(0 0 0 0); }
-  100% { transform: translate(0); text-shadow: none; clip-path: inset(0 0 0 0); }
+.scr { display: inline-block; transition: color .35s ease; }
+.scr .g { color: var(--accent); opacity: .85; }
+.stack.is-alt .id-role .scr, .stack.is-alt .id-top .scr { color: #9A6F1E; }
+.stack.is-alt .scr .g { color: #C8952F; }
+.id-chip { transition: background-color .4s ease, width .4s ease; }
+.stack.is-alt .id-chip { background: var(--gold); width: 46px; }
+
+.card-front .card-body { position: relative; overflow: hidden; }
+.photo { position: relative; }
+.photo::before, .photo::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0;
+  background: url("assets/headshot.jpg") center / cover no-repeat;
+  mix-blend-mode: screen;
 }
-@keyframes glitch-img {
+.photo::before { background-color: #FF2E63; background-blend-mode: multiply; }
+.photo::after  { background-color: #00E5FF; background-blend-mode: multiply; }
+.stack.glitching .photo::before { animation: split-r .62s linear both; }
+.stack.glitching .photo::after  { animation: split-c .62s linear both; }
+.stack.glitching .photo img     { animation: jolt .62s linear both; }
+@keyframes split-r {
+  0%   { opacity: 0; }
+  8%   { opacity: .9; transform: translate(-7px, 0);  clip-path: inset(8% 0 70% 0); }
+  20%  { transform: translate(5px, 0);   clip-path: inset(45% 0 35% 0); }
+  34%  { transform: translate(-10px, 0); clip-path: inset(70% 0 8% 0); }
+  48%  { transform: translate(4px, 0);   clip-path: inset(20% 0 55% 0); }
+  62%  { opacity: .7; transform: translate(-3px, 0); clip-path: inset(0 0 0 0); }
+  80%  { opacity: .3; transform: translate(-1px, 0); }
+  100% { opacity: 0; transform: none; clip-path: inset(0 0 0 0); }
+}
+@keyframes split-c {
+  0%   { opacity: 0; }
+  10%  { opacity: .9; transform: translate(8px, 0);  clip-path: inset(60% 0 20% 0); }
+  24%  { transform: translate(-6px, 0); clip-path: inset(12% 0 66% 0); }
+  38%  { transform: translate(9px, 0);  clip-path: inset(38% 0 40% 0); }
+  52%  { transform: translate(-4px, 0); clip-path: inset(78% 0 4% 0); }
+  66%  { opacity: .7; transform: translate(3px, 0); clip-path: inset(0 0 0 0); }
+  84%  { opacity: .25; transform: translate(1px, 0); }
+  100% { opacity: 0; transform: none; clip-path: inset(0 0 0 0); }
+}
+@keyframes jolt {
   0%, 100% { transform: none; filter: none; }
-  20% { transform: translateX(-4px); filter: hue-rotate(40deg) saturate(1.6); }
-  40% { transform: translateX(3px); filter: hue-rotate(-30deg) contrast(1.3); }
-  60% { transform: translateX(-2px); filter: saturate(.6); }
+  12% { transform: translate(-3px, 1px) skewX(-2deg); filter: contrast(1.25) saturate(1.3); }
+  26% { transform: translate(3px, -1px) skewX(2deg); }
+  40% { transform: translate(-2px, 0); filter: contrast(1.1); }
+  60% { transform: translate(1px, 0); filter: none; }
 }
+
+.glitch-scan {
+  position: absolute; left: 0; right: 0; top: -30%; height: 30%; z-index: 3; pointer-events: none; opacity: 0;
+  background:
+    repeating-linear-gradient(0deg, rgba(11,20,18,.10) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, transparent, rgba(45,212,191,.28) 55%, rgba(255,255,255,.55) 92%, transparent);
+}
+.stack.glitching .glitch-scan { animation: scan .62s cubic-bezier(.3,.5,.4,1) both; }
+.stack.is-alt.glitching .glitch-scan {
+  background:
+    repeating-linear-gradient(0deg, rgba(11,20,18,.10) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, transparent, rgba(227,181,79,.35) 55%, rgba(255,255,255,.6) 92%, transparent);
+}
+@keyframes scan { 0% { top: -30%; opacity: 1; } 85% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
 
 /* ---------- Small screens ---------- */
 @media (max-width: 640px) {
