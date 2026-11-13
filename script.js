@@ -40,6 +40,32 @@ if (stack && !reduceMotion && window.matchMedia('(hover: hover) and (pointer: fi
 }
 
 /* ---------------------------------------------------------
+   Hero ID card: role glitches between
+   "Cloud Core Engineer" and "Growth Operator"
+   --------------------------------------------------------- */
+if (stack) {
+  let glitchTimer;
+  const setAlt = (on) => {
+    if (stack.classList.contains('is-alt') === on) return;
+    stack.classList.add('glitching');
+    // swap the text halfway through the glitch, so the change hides inside the noise
+    setTimeout(() => stack.classList.toggle('is-alt', on), reduceMotion ? 0 : 180);
+    clearTimeout(glitchTimer);
+    glitchTimer = setTimeout(() => stack.classList.remove('glitching'), 480);
+  };
+  if (window.matchMedia('(hover: hover)').matches) {
+    stack.addEventListener('pointerenter', () => setAlt(true));
+    stack.addEventListener('pointerleave', () => setAlt(false));
+  } else {
+    // Phones: flip every few seconds, or on tap
+    let alt = false;
+    const flip = () => { alt = !alt; setAlt(alt); };
+    let cycle = setInterval(flip, 3600);
+    stack.addEventListener('click', () => { clearInterval(cycle); flip(); cycle = setInterval(flip, 3600); });
+  }
+}
+
+/* ---------------------------------------------------------
    Career deck: drag/swipe the top card away; it flies off,
    then tucks in at the back of the pile.
    --------------------------------------------------------- */
