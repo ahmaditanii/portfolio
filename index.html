@@ -124,13 +124,30 @@
                 <h3 class="display job-title">Huawei</h3>
                 <p class="job-role">Cloud Core Network Engineer</p>
               </div>
-              <ul class="job-projects mono">
-                <li><span>2026 → now</span>Alfa IMS project</li>
-                <li><span>2026</span>touch UPCF project</li>
-                <li><span>2025</span>touch EOX 1.2 project</li>
-                <li><span>2024 – 25</span>OGERO EOS project</li>
-                <li><span>2023</span>touch EOS project</li>
-              </ul>
+              <div class="hw-switch mono" role="tablist" aria-label="Huawei details">
+                <button type="button" role="tab" id="hw-tab-sum" aria-controls="hw-sum" aria-selected="true">Summary</button>
+                <button type="button" role="tab" id="hw-tab-time" aria-controls="hw-time" aria-selected="false">Timeline</button>
+              </div>
+              <div class="hw-panels">
+                <div class="hw-panel is-on" id="hw-sum" role="tabpanel" aria-labelledby="hw-tab-sum">
+                  <p class="job-lead">I deploy, upgrade and integrate the cloud core behind Lebanon's mobile and fixed networks.</p>
+                  <div class="job-stats">
+                    <div><b>3+</b><small>years at Huawei</small></div>
+                    <div><b>5</b><small>operator projects</small></div>
+                    <div><b>3</b><small>operators: Alfa, touch, OGERO</small></div>
+                  </div>
+                </div>
+                <div class="hw-panel" id="hw-time" role="tabpanel" aria-labelledby="hw-tab-time">
+                  <div class="job-gantt" id="huawei-timeline" data-from="2023-06" aria-label="Project timeline, June 2023 to now">
+                    <div class="g-row"><span class="g-lbl">Alfa IMS<small>2026 → now</small></span><span class="g-track"><span class="g-bar is-now" data-start="2026-06" data-end="now" style="left:87.8%;right:0"></span></span></div>
+                    <div class="g-row"><span class="g-lbl">touch UPCF<small>2026</small></span><span class="g-track"><span class="g-bar" data-start="2026-04" data-end="2026-06" style="left:82.9%;right:12.2%"></span></span></div>
+                    <div class="g-row"><span class="g-lbl">touch EOX 1.2<small>2025</small></span><span class="g-track"><span class="g-bar" data-start="2025-06" data-end="2025-12" style="left:58.5%;right:26.8%"></span></span></div>
+                    <div class="g-row"><span class="g-lbl">OGERO EOS<small>2024 – 25</small></span><span class="g-track"><span class="g-bar" data-start="2024-08" data-end="2025-07" style="left:34.1%;right:39%"></span></span></div>
+                    <div class="g-row"><span class="g-lbl">touch EOS<small>2023</small></span><span class="g-track"><span class="g-bar" data-start="2023-06" data-end="2023-12" style="left:0;right:85.4%"></span></span></div>
+                    <div class="g-row g-axis" aria-hidden="true"><span></span><span class="g-ticks"><span data-year="2023" style="left:0">'23</span><span data-year="2024" style="left:17.1%">'24</span><span data-year="2025" style="left:46.3%">'25</span><span data-year="2026" style="left:75.6%">'26</span></span></div>
+                  </div>
+                </div>
+              </div>
               <p class="job-foot mono"><span>01 / 05</span><span>Beirut, LB</span></p>
             </article>
 

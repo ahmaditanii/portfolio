@@ -194,6 +194,7 @@ if (deck) {
   deck.addEventListener('pointerdown', (e) => {
     const card = e.target.closest('.job');
     if (!card || busy || card !== cards[order[0]]) return;
+    if (e.target.closest('button, a')) return;   // let buttons inside the card work normally
     if (e.button !== undefined && e.button !== 0) return;
     drag = { card, x: e.clientX, y: e.clientY, t: performance.now(), dx: 0, dy: 0, id: e.pointerId };
     card.setPointerCapture(e.pointerId);
@@ -244,4 +245,55 @@ if (deck) {
   indexBtns.forEach((b) => b.addEventListener('click', () => goTo(Number(b.dataset.go))));
 
   layout();
+}
+
+/* ---------------------------------------------------------
+   Huawei project timeline: bars placed by date, so the
+   current project keeps growing as the months pass.
+   --------------------------------------------------------- */
+const gantt = document.getElementById('huawei-timeline');
+if (gantt) {
+  const toMonths = (v) => {
+    if (v === 'now') { const d = new Date(); return d.getFullYear() * 12 + d.getMonth(); }
+    const [y, m] = v.split('-').map(Number);
+    return y * 12 + (m - 1);
+  };
+  const from = toMonths(gantt.dataset.from);
+  const to = Math.max(toMonths('now'), from + 1);
+  const pct = (m) => (Math.min(Math.max((m - from) / (to - from), 0), 1) * 100).toFixed(1) + '%';
+  gantt.querySelectorAll('.g-bar').forEach((bar) => {
+    bar.style.left = pct(toMonths(bar.dataset.start));
+    bar.style.right = (100 - parseFloat(pct(toMonths(bar.dataset.end)))).toFixed(1) + '%';
+  });
+  gantt.querySelectorAll('[data-year]').forEach((t) => {
+    const y = Number(t.dataset.year);
+    t.style.left = y * 12 <= from ? '0' : pct(y * 12);
+  });
+  // Summary / Timeline switch; bars draw in each time the timeline opens
+  const tabs = [...document.querySelectorAll('.hw-switch [role="tab"]')];
+  const show = (tab) => {
+    tabs.forEach((t) => {
+      const on = t === tab;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      const panel = document.getElementById(t.getAttribute('aria-controls'));
+      panel.classList.toggle('is-on', on);
+      panel.inert = !on;
+    });
+    gantt.classList.remove('drawn');
+    if (tab.id === 'hw-tab-time') {
+      if (reduceMotion) gantt.classList.add('drawn');
+      else requestAnimationFrame(() => requestAnimationFrame(() => gantt.classList.add('drawn')));
+    }
+  };
+  tabs.forEach((t) => {
+    t.addEventListener('click', () => show(t));
+    t.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault(); e.stopPropagation();       // don't also flip the deck
+      const next = tabs[(tabs.indexOf(t) + 1) % tabs.length];
+      next.focus(); show(next);
+    });
+  });
+  if (tabs.length) show(tabs[0]);
 }
